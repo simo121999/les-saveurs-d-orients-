@@ -41,7 +41,38 @@
 <div class="toast" id="toast">Ajouté au panier</div>
 <script>
 const categories=[['Tous','✨'],['Épices','🌶️'],['Herbes aromatiques','🌿'],['Graines','🌱'],['Fruits secs','🥜'],['Huiles','🫒'],['Miels & thés','🍯'],['Cosmétiques','🧼']];
-function artData(name,emoji,cat){const palettes={'Épices':['#f5dfb9','#a54a24'],'Herbes aromatiques':['#e4f0df','#3f7d48'],'Graines':['#f4ead7','#8a663c'],'Fruits secs':['#f4e1c6','#9a5d32'],'Huiles':['#edf1cf','#667b2e'],'Miels & thés':['#f7e1a5','#a76b13'],'Cosmétiques':['#f2e6ef','#8b5f82']};let p=palettes[cat]||['#f6efe2','#315c46'];let esc=name.replace(/&/g,'&amp;').replace(/</g,'&lt;');let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="700" height="520" viewBox="0 0 700 520"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${p[0]}"/><stop offset="1" stop-color="#fffaf0"/></linearGradient></defs><rect width="700" height="520" rx="36" fill="url(#g)"/><circle cx="350" cy="215" r="142" fill="white" opacity=".82"/><text x="350" y="265" text-anchor="middle" font-size="150">${emoji}</text><rect x="80" y="405" width="540" height="70" rx="35" fill="${p[1]}" opacity=".94"/><text x="350" y="449" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-weight="700" font-size="25">${esc.length>34?esc.slice(0,32)+'…':esc}</text></svg>`;return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg)}
+function artData(name,emoji,cat){
+  const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const n=name.toLowerCase();
+  let svg='';
+  const frame=(inside,accent='#9f542f')=>`<svg xmlns="http://www.w3.org/2000/svg" width="700" height="520" viewBox="0 0 700 520"><defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fbf0d7"/><stop offset="1" stop-color="#fffdf7"/></linearGradient><filter id="sh"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-opacity=".18"/></filter></defs><rect width="700" height="520" rx="36" fill="url(#bg)"/><ellipse cx="350" cy="360" rx="205" ry="30" fill="#7a4b2c" opacity=".10"/>${inside}<rect x="78" y="418" width="544" height="66" rx="33" fill="${accent}"/><text x="350" y="460" text-anchor="middle" fill="white" font-family="Arial,sans-serif" font-weight="700" font-size="24">${esc(name.length>36?name.slice(0,34)+'…':name)}</text></svg>`;
+  if(n.includes('diwan')){
+    svg=frame(`<g filter="url(#sh)"><rect x="205" y="65" width="290" height="310" rx="12" fill="#e6a51b" stroke="#6e301d" stroke-width="10"/><rect x="205" y="65" width="290" height="55" fill="#57281d"/><text x="350" y="103" text-anchor="middle" fill="#fff6d6" font-family="Arial" font-size="22">THÉ VERT</text><text x="350" y="195" text-anchor="middle" fill="#165a8b" font-family="Georgia" font-size="68" font-weight="700">Diwan</text><text x="350" y="235" text-anchor="middle" fill="#165a8b" font-family="Arial" font-size="28">41022</text><path d="M220 315 Q350 235 480 315 L480 365 L220 365Z" fill="#cf6f26"/><circle cx="350" cy="290" r="35" fill="#f4e1ad"/><path d="M315 335 Q350 280 385 335" fill="#275b82"/><text x="350" y="350" text-anchor="middle" fill="#4f2b1d" font-family="Arial" font-size="18" font-weight="700">CHUNMEE EXTRA FIN</text></g>`,'#a76b13');
+  }else if(n.includes('ajwa')){
+    let dates=''; [[265,190],[335,170],[405,195],[300,245],[375,245],[340,300],[425,280],[245,275]].forEach(([x,y],i)=>{dates+=`<ellipse cx="${x}" cy="${y}" rx="45" ry="31" transform="rotate(${i%2?18:-14} ${x} ${y})" fill="${i%3?'#2b1713':'#3a1d18'}"/><path d="M${x-24} ${y} q24 -9 48 0" stroke="#5c342b" stroke-width="4" fill="none" opacity=".8"/>`});
+    svg=frame(`<g filter="url(#sh)"><path d="M185 260 Q350 390 515 260 L485 345 Q350 410 215 345Z" fill="#c99135" stroke="#9c6b24" stroke-width="7"/>${dates}</g>`,'#7d3f25');
+  }else if(cat==='Épices'){
+    let col='#b87333';
+    if(/curcuma|curry/.test(n)) col='#e7a514'; else if(/paprika|cayenne|piment/.test(n)) col='#c94627'; else if(/poivre noir/.test(n)) col='#54483c'; else if(/poivre blanc|ail|oignon/.test(n)) col='#d8c9a8'; else if(/coriandre|cumin/.test(n)) col='#a8763e'; else if(/cannelle/.test(n)) col='#9b5b32'; else if(/laurier/.test(n)) col='#71804b'; else if(/safran/.test(n)) col='#b52e25';
+    let center='';
+    if(n.includes('cannelle bâton')) center=`<g filter="url(#sh)" transform="translate(350 225) rotate(-10)"><rect x="-125" y="-28" width="250" height="42" rx="20" fill="#9a5834"/><rect x="-105" y="18" width="230" height="42" rx="20" fill="#b46a3c"/><circle cx="125" cy="-7" r="20" fill="#6f3a25"/><circle cx="125" cy="39" r="20" fill="#7b4027"/></g>`;
+    else if(n.includes('cardamome')) center=`<g filter="url(#sh)" fill="#8ca35a">${[[290,190],[350,165],[410,200],[315,245],[385,255],[350,305]].map(([x,y],i)=>`<ellipse cx="${x}" cy="${y}" rx="48" ry="25" transform="rotate(${i*23} ${x} ${y})"/><path d="M${x-28} ${y} L${x+28} ${y}" stroke="#667a3e" stroke-width="5"/>`).join('')}</g>`;
+    else if(n.includes('muscade')) center=`<g filter="url(#sh)" fill="#8a5b34">${[[300,210],[385,210],[345,285]].map(([x,y])=>`<ellipse cx="${x}" cy="${y}" rx="58" ry="48"/><path d="M${x-30} ${y-15} q30 25 60 0 M${x-25} ${y+10} q25 20 50 0" stroke="#5f3c25" stroke-width="5" fill="none"/>`).join('')}</g>`;
+    else if(n.includes('anis étoilé')) center=`<text x="350" y="300" text-anchor="middle" font-size="210">✦</text>`;
+    else center=`<g filter="url(#sh)"><ellipse cx="350" cy="305" rx="155" ry="55" fill="#c7b6a0"/><path d="M205 250 Q350 355 495 250 L465 330 Q350 390 235 330Z" fill="#f8f4ea" stroke="#ddd1bd" stroke-width="7"/><ellipse cx="350" cy="245" rx="128" ry="70" fill="${col}"/><ellipse cx="350" cy="225" rx="105" ry="48" fill="${col}" opacity=".92"/></g>`;
+    svg=frame(center,'#aa5a35');
+  }else if(cat==='Herbes aromatiques'){
+    let flower=n.includes('lavande')?'#76589d':'#4f8a4b';
+    let sprigs='';
+    for(let j=0;j<5;j++){let x=260+j*45, rot=-28+j*14;sprigs+=`<g transform="translate(${x} 300) rotate(${rot})"><path d="M0 30 Q10 -65 18 -145" stroke="#477443" stroke-width="8" fill="none"/>${[-105,-75,-45,-15].map((yy,k)=>`<ellipse cx="${k%2?28:-5}" cy="${yy}" rx="28" ry="12" transform="rotate(${k%2?-25:25} ${k%2?28:-5} ${yy})" fill="${flower}"/>`).join('')}</g>`}
+    if(n.includes('anis étoilé')) sprigs=`<text x="350" y="310" text-anchor="middle" font-size="220" fill="#8b542d">✦</text>`;
+    if(n.includes('clous')) sprigs=`<g fill="#6b3e2c" stroke="#4b2a20" stroke-width="5">${[[270,190,20],[350,160,-10],[420,220,35],[300,285,-30],[395,300,15]].map(([x,y,r])=>`<g transform="translate(${x} ${y}) rotate(${r})"><rect x="-8" y="0" width="16" height="90" rx="8"/><circle cx="0" cy="0" r="22"/></g>`).join('')}</g>`;
+    svg=frame(`<g filter="url(#sh)">${sprigs}</g>`,'#4d7c4d');
+  }else{
+    svg=frame(`<circle cx="350" cy="235" r="135" fill="#fff" opacity=".9"/><text x="350" y="285" text-anchor="middle" font-size="145">${emoji}</text>`,'#315c46');
+  }
+  return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+}
 const products=[
 {id:1,n:'Graines de chia',c:'Graines',e:'🌱',desc:'Graines de chia sélectionnées.',v:[['100 g', 1500]]},
 {id:2,n:'Graines de pavot',c:'Graines',e:'⚫',desc:'Graines de pavot pour pâtisseries et recettes.',v:[['100 g', 1000]]},
